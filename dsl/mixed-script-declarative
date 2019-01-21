@@ -1,0 +1,33 @@
+// script code can be used outside of the pipeline section
+def api_user = 'fred.bloggs'
+
+pipeline {
+    agent any
+    stages {
+        stage('one') {
+            steps {
+                echo "${api_user}"
+                script {
+                    // script can be used in the pipeline, in a script step
+                    api_user = 'jane.doe'
+                }
+                echo "${api_user}"
+                script {
+                    // set environment variable from Groovy script
+                    env.API_USER = api_user
+                }
+                sh 'echo ${API_USER}'
+            }
+        }
+        stage('two') {
+            steps {
+                script {
+                    // change value of global variable
+                    api_user = 'jim.jones'
+                }
+                // attempt to access environment variable defined in stage one
+                sh 'echo ${API_USER}'
+            }
+        }
+    }
+}

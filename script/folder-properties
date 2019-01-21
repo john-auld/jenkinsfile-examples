@@ -1,0 +1,12 @@
+node {
+    withFolderProperties{
+        // Set environment variable using a folder property
+        env.awsRegion = awsRegion
+    }
+    
+    try {
+      echo("awsRegion: ${env.awsRegion}")
+    } catch (Exception e) {
+      echo('the last command failed.')
+    }
+}
