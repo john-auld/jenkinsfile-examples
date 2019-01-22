@@ -1,0 +1,35 @@
+// Custom tool paths can be defined on a per node basis in jenkins > Nodes > node-label > Tool locations
+//  or WithEnv can be used in the piepline to set the path
+
+pipeline {
+    agent { label 'win-2016-01' }
+    
+    environment {
+        SIGNTOOL_HOME = tool name: 'signtool', type: 'com.cloudbees.jenkins.plugins.customtools.CustomTool'
+    }
+    
+    stages {
+        stage('git checkout') {
+            steps {
+                git 'https://github.com/john-auld/packer-centos7-chroot'    
+            }
+        }
+        stage('git info') {
+            steps {
+                bat 'dir'
+            }
+        }
+        stage('signtool test') {
+            steps {
+                bat "${SIGNTOOL_HOME}/signtool.exe"
+            }
+        }
+        stage('WithEnv Test') {
+            steps {
+                withEnv(['MYTOOL_HOME=c:/tools/signtool']) {
+                    bat '${MYTOOL_HOME}/signtool'
+                }
+            }
+        }
+    }
+}
